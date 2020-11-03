@@ -1,2 +1,2 @@
 export { default as emailSender } from './emailSender'
-export { default as hashGenerator } from './hashGenerator'
+export { default as encodeMD5 } from './encodeMD5'
