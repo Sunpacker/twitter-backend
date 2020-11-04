@@ -1,6 +1,6 @@
 import { model, Schema, Document } from 'mongoose'
 
-export interface IUser {
+export interface IUserModel {
 	_id?: string;
 	email: string;
 	fullname: string;
@@ -12,9 +12,9 @@ export interface IUser {
 	about?: string;
 	website?: string;
 }
-export type IUserDocument = IUser & Document
+export type IUserModelDocument = IUserModel & Document
 
-const UserSchema = new Schema<IUser>({
+const UserSchema = new Schema<IUserModel>({
 	email: {
 		unique: true,
 		required: true,
@@ -54,4 +54,4 @@ UserSchema.set('toJSON', {
 	}
 })
 
-export default model<IUserDocument>('User', UserSchema)
+export default model<IUserModelDocument>('User', UserSchema)

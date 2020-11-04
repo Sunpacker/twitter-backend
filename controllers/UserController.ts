@@ -3,17 +3,15 @@ import { Result, ValidationError, validationResult } from 'express-validator'
 import { Types } from 'mongoose'
 import jwt from 'jsonwebtoken'
 
-import UserModel, { IUser, IUserDocument } from '../models/UserModel'
+import UserModel, { IUserModel, IUserModelDocument } from '../models/UserModel'
 import { emailSender, encodeMD5 } from '../utils'
 import { IResponse } from './types'
 
 
-const isValidObjectId = Types.ObjectId.isValid
-
 class UserControllerClass {
 	async index(req: express.Request, res: express.Response<IResponse>): Promise<void> {
 		try {
-			const users: IUserDocument[] | null = await UserModel.find().exec()
+			const users: IUserModelDocument[] | null = await UserModel.find().exec()
 
 			res.status(201).json({
 				status: 'success',
@@ -21,7 +19,7 @@ class UserControllerClass {
 			})
 		} catch(e) {
 			res.status(500).json({
-				status: 'get users error',
+				status: 'error',
 				message: `get users error: ${e}`
 			})
 		}
@@ -31,12 +29,12 @@ class UserControllerClass {
 		try {
 			const userId: string = req.params.id
 
-			if(!isValidObjectId(userId)) {
+			if(!Types.ObjectId.isValid(userId)) {
 				res.status(400).send()
 				return
 			}
 
-			const user: IUserDocument | null = await UserModel.findById(userId).exec()
+			const user: IUserModelDocument | null = await UserModel.findById(userId).exec()
 			
 			if(!user) {
 				res.status(404).send()
@@ -49,8 +47,8 @@ class UserControllerClass {
 			})
 		} catch(e) {
 			res.status(500).json({
-				status: 'get users error',
-				message: `get users error: ${e}`
+				status: 'error',
+				message: `get user error: ${e}`
 			})
 		}
 	}
@@ -67,7 +65,7 @@ class UserControllerClass {
 				return
 			}
 
-			const data: IUser = {
+			const data: IUserModel = {
 				email: req.body.email,
 				fullname: req.body.fullname,
 				username: req.body.username,
@@ -75,7 +73,7 @@ class UserControllerClass {
 				confirmHash: encodeMD5(process.env.SECRET_KEY || Math.random().toString()),
 				confirmed: false
 			}
-			const user: IUserDocument = await UserModel.create(data)
+			const user: IUserModelDocument = await UserModel.create(data)
 
 			emailSender({
 				emailFrom: 'admin@twitclone.loc',
@@ -87,20 +85,20 @@ class UserControllerClass {
 			}, (e: Error | null) => {
 				if(e) {
 					res.status(500).json({
-						status: 'send email error',
-						message: e
+						status: 'error',
+						message: `send email error: ${e}`
 					})
 				} else {
 					res.status(201).json({
-						status: 'user creation success',
+						status: 'success',
 						data: user
 					})
 				}
 			})
 		} catch(e) {
 			res.status(500).json({
-				status: 'user creation error',
-				message: e
+				status: 'error',
+				message: `user creation error: ${e}`
 			})
 		}
 	}
@@ -117,7 +115,7 @@ class UserControllerClass {
 				return
 			}
 
-			const user: IUserDocument | null = await UserModel.findOne({ confirmHash: hash }).exec()
+			const user: IUserModelDocument | null = await UserModel.findOne({ confirmHash: hash }).exec()
 
 			if(user) {
 				user.confirmed = true
@@ -144,7 +142,7 @@ class UserControllerClass {
 
 	async afterLogin(req: express.Request, res: express.Response<IResponse>): Promise<void> {
 		try {
-			const user = req.user ? (req.user as IUserDocument).toJSON() : undefined
+			const user = req.user ? (req.user as IUserModelDocument).toJSON() : undefined
 
 			res.json({
 				status: 'success',
@@ -155,7 +153,7 @@ class UserControllerClass {
 			})
 		} catch(e) {
 			res.status(500).json({
-				status: 'get users error',
+				status: 'error',
 				message: `get users error: ${e}`
 			})
 		}
@@ -163,7 +161,7 @@ class UserControllerClass {
 
 	async getUserInfo(req: express.Request, res: express.Response<IResponse>): Promise<void> {
 		try {
-			const user = req.user ? (req.user as IUserDocument).toJSON() : undefined
+			const user = req.user ? (req.user as IUserModelDocument).toJSON() : undefined
 
 			res.json({
 				status: 'success',
@@ -171,7 +169,7 @@ class UserControllerClass {
 			})
 		} catch(e) {
 			res.status(500).json({
-				status: 'get users error',
+				status: 'error',
 				message: `get users error: ${e}`
 			})
 		}

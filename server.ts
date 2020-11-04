@@ -1,11 +1,10 @@
 import dotenv from 'dotenv'
-dotenv.config()
 import express from 'express'
 
-import { UserController } from './controllers'
-import { registerValidation } from './validations'
+dotenv.config()
 import { passport } from './core/passport'
 import './core/db'
+import router from './core/router'
 
 
 const app = express()
@@ -13,19 +12,10 @@ const port = Number(process.env.PORT) || 8888
 
 app.use(express.json())
 app.use(passport.initialize())
+app.use(router)
 
-app.get('/users', UserController.index)
-app.get('/users/me', passport.authenticate('jwt', { session: false }), UserController.getUserInfo)
-app.get('/users/:id', UserController.show)
-app.get('/auth/verify', UserController.verify)
-app.post('/auth/register', registerValidation, UserController.create)
-app.post('/auth/login', passport.authenticate('local'), UserController.afterLogin)
-// app.patch('/users', UserController.update)
-// app.delete('/users', UserController.delete)
-
-
-app.listen(port, (): void => {
-	// if(e) throw new Error(e)
-
+app.listen(port, () => {
 	console.log(`Server is running at http://localhost:${port}`)
+}).on('error', (e: Error) => {
+	console.log(`Server start error: ${e}`)
 })
