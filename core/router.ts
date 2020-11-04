@@ -1,7 +1,7 @@
 import { Router } from 'express'
 import { passport } from './passport'
 import { UserController, TweetController } from '../controllers'
-import { registerValidation, tweetCreationValidation } from '../validations'
+import { registerValidation, tweetValidation } from '../validations'
 
 
 const router: Router = Router()
@@ -16,7 +16,9 @@ router.get('/users/:id', UserController.show)
 
 router.get('/tweets', TweetController.index)
 router.get('/tweets/:id', TweetController.show)
-router.post('/tweets', passport.authenticate('jwt'), tweetCreationValidation, TweetController.create)
+router.post('/tweets', passport.authenticate('jwt'), tweetValidation, TweetController.create)
+router.patch('/tweets/:id', passport.authenticate('jwt'), tweetValidation, TweetController.update)
 router.delete('/tweets/:id', passport.authenticate('jwt'), TweetController.delete)
+
 
 export default router

@@ -1,2 +1,2 @@
 export { default as registerValidation } from './register'
-export { default as tweetCreationValidation } from './tweetCreation'
+export { default as tweetValidation } from './tweet'

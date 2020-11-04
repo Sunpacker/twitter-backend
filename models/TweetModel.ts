@@ -21,7 +21,7 @@ const TweetSchema = new Schema<ITweetModel>({
 		ref: 'User',
 		type: Schema.Types.ObjectId
 	},
-})
+}, { timestamps: true })
 
 
 export default model<ITweetModelDocument>('Tweet', TweetSchema)

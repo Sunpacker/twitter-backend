@@ -44,7 +44,7 @@ const UserSchema = new Schema<IUserModel>({
 	location: String,
 	about: String,
 	website: String,
-})
+}, { timestamps: true })
 
 UserSchema.set('toJSON', {
 	transform(_, obj) {

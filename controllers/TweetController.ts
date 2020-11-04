@@ -85,6 +85,53 @@ class TweetControllerClass {
 		}
 	}
 
+	async update(req: express.Request, res: express.Response<IResponse>): Promise<void> {
+		try {
+			const user = req.user as IUserModel
+			
+			if(user) {
+				const tweetId = req.params.id
+
+				if(!Types.ObjectId.isValid(tweetId)) {
+					res.status(400).send()
+					return
+				}
+
+				const tweet = await TweetModel.findById(tweetId)
+
+				if(tweet) {
+					if(String(tweet.user) === String(user._id)) {
+						const text = req.body.text
+
+						if(text.length >= 6 && text.length <= 280) {
+							tweet.text = text
+							tweet.save()
+		
+							res.status(200).json({ status: 'success' })
+						} else {
+							res.status(400).json({
+								status: 'error',
+								message: 'Длина текста твита может быть от 6 до 280 символов'
+							})
+						}
+					} else {
+						res.status(403).json({
+							status: 'error',
+							message: 'Нельзя изменить чужой твит'
+						})
+					}
+				} else {
+					res.status(404).send()
+				}
+			}
+		} catch(e) {
+			res.status(500).json({
+				status: 'error',
+				message: `tweet update error: ${e}`
+			})
+		}
+	}
+
 	async delete(req: express.Request, res: express.Response<IResponse>): Promise<void> {
 		try {
 			const user = req.user as IUserModel
@@ -98,13 +145,12 @@ class TweetControllerClass {
 				}
 
 				const tweet = await TweetModel.findById(tweetId)
+
 				if(tweet) {
-					if(tweet.user === user) {
+					if(String(tweet.user) === String(user._id)) {
 						tweet.remove()
 	
-						res.status(200).json({
-							status: 'success'
-						})
+						res.status(200).json({ status: 'success' })
 					} else {
 						res.status(403).json({
 							status: 'error',
