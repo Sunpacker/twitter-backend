@@ -1,5 +1,6 @@
 import dotenv from 'dotenv'
 import express from 'express'
+import cors from 'cors'
 
 dotenv.config()
 import { passport } from './core/passport'
@@ -10,6 +11,7 @@ import router from './core/router'
 const app = express()
 const port = Number(process.env.PORT) || 8888
 
+app.use(cors())
 app.use(express.json())
 app.use(passport.initialize())
 app.use(router)

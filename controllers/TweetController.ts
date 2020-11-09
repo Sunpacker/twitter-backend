@@ -10,7 +10,7 @@ import { IResponse } from './types'
 class TweetControllerClass {
 	async index(req: express.Request, res: express.Response<IResponse>): Promise<void> {
 		try {
-			const tweets: ITweetModelDocument[] | null = await TweetModel.find().exec()
+			const tweets: ITweetModelDocument[] | null = await TweetModel.find().populate('user').exec()
 
 			res.status(201).json({
 				status: 'success',
@@ -33,7 +33,7 @@ class TweetControllerClass {
 				return
 			}
 
-			const tweet: ITweetModelDocument | null = await TweetModel.findById(tweetId).exec()
+			const tweet: ITweetModelDocument | null = await TweetModel.findById(tweetId).populate('user').exec()
 			
 			if(!tweet) {
 				res.status(404).send()

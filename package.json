@@ -18,6 +18,7 @@
     "@types/passport": "^1.0.4",
     "@types/passport-jwt": "^3.0.3",
     "@types/passport-local": "^1.0.33",
+    "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "express-validator": "^6.6.1",
@@ -38,5 +39,8 @@
     "ext": "ts",
     "exec": "ts-node server.ts",
     "delay": "250"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.8"
   }
 }
